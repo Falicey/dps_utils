@@ -3,6 +3,7 @@ from datetime import datetime
 import os
 import os.path
 import csv
+import math
 
 
 def main():
@@ -14,7 +15,7 @@ def main():
 
     file_list = [(f.name, f.stat()) for f in os.scandir(target_dir)]
 
-    content_list = [(f[0], max(f[1].st_size // 1000, 0), datetime.fromtimestamp(f[1].st_mtime),
+    content_list = [(f[0], math.ceil(f[1].st_size / 1000), datetime.fromtimestamp(f[1].st_mtime),
                      datetime.fromtimestamp(f[1].st_ctime)) for f in file_list]
     content_list.sort(key=lambda a: a[0])
 
