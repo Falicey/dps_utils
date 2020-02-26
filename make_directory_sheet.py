@@ -27,7 +27,7 @@ def main():
 
     file_list = [(f.name, f.stat()) for f in os.scandir(target_dir)]
 
-    content_list = [(f[0], f[1].st_size / 1000, format_datetime(f[1].st_ctime),
+    content_list = [(f[0], format_size(f[1].st_size), format_datetime(f[1].st_ctime),
                      format_datetime(f[1].st_mtime)) for f in file_list]
     content_list.sort(key=lambda a: a[0])
 
