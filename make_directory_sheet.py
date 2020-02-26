@@ -35,7 +35,11 @@ def main():
 
     wb = Workbook()
     ws = wb.active
+    ws.title = os.path.split(target_dir)[1]
     ws.page_setup.fitToWidth = 1
+    ws.append(("Directory",))
+    ws.append((target_dir,))
+    ws.append(())
     ws.append(("Name", "(Size (KB)", "Date Created", "Date Modified"))
     date_style = NamedStyle(name='date_style', number_format='DD/MM/YYYY HH:MM:MM')
     wb.add_named_style(date_style)
@@ -43,7 +47,7 @@ def main():
         ws.column_dimensions[i].width = '20'
     for i in range(len(content_list)):
         for j in range(4):
-            cell = ws.cell(i+2, j+1)
+            cell = ws.cell(i+5, j+1)
             cell.value = content_list[i][j]
 
     wb.save(excelpath)
