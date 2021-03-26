@@ -83,7 +83,7 @@ def get_as_data(file_list, aspace, parent_folder):
 
 
 def write_csv(entries):
-    with open("sound_model.csv", 'w', newline='') as csv_file:
+    with open("kaltura_bulk_upload.csv", 'w', newline='') as csv_file:
         w = csv.writer(csv_file, delimiter=',')
         w.writerow(['* title', 'description', "tags", "url", "contentType", "referenceID", "category"])
         for entry in entries:
