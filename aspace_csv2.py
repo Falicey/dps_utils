@@ -40,44 +40,36 @@ def get_as_data(file_list, aspace, parent_folder):
     entries = list()
     num_missing = 0
     for f, f_path in file_list:
-        comp_id = comp_id_reg.match(f).group(0)
-        resource = repo.search.with_params(q="component_id:{}".format(comp_id))
+        aspace_file_name = f + ".wav"
+        resource = repo.search.with_params(q="title:{}".format(aspace_file_name))
         found = False
         for r in resource:
             found = True
             j = r.json()
             #print(json.dumps(j, indent=2))
-            dig_obj_tree = r.instances[0].digital_object.tree
-            for r2 in dig_obj_tree.walk:
-                if r2.jsonmodel_type == "digital_object_component":
-                    pass
-                    #print(r2)
-            title = j['instances'][0]['digital_object']['_resolved']['title'].replace("\n", "").replace(",", "")
-            reference_id = j['instances'][0]['digital_object']['ref']
-            dig_obj_type = j['instances'][0]['digital_object']['_resolved']['digital_object_type'].replace("\n", "")
+            title = j['digital_object']['_resolved']['title'].replace("\n", "").replace(",", "")
+            reference_id = j['uri']
+            dig_obj_type = j['digital_object']['_resolved']['digital_object_type'].replace("\n", "")
             if dig_obj_type.count("sound") > 0:
                 dig_obj_type = 'sound'
             elif dig_obj_type.count("video") > 0:
                 dig_obj_type = 'video'
             else:
                 dig_obj_type = "image"
-            notes = j['notes']
+            archival_obj_uri = j['digital_object']['_resolved']['linked_instances'][0]['ref']
+            archival_obj = aspace.client.get(archival_obj_uri).json()
+            notes = archival_obj['notes']
             description = ""
             for note in notes:
                 if note["type"] == "abstract":
                     description = note['content'][0].replace("\n", "").replace(",", "")
-                    break
-            rights_statement = ""
-            for note in notes:
-                if note["type"] == "userestrict":
-                    rights_statement = note["subnotes"][0]["content"].replace("\n", "")
                     break
             entries.append([title, description, '', r"sftp://sftp2357732:aZIV8uf0@ftp.kaltura.com/University-Libraries/"
                             + parent_folder + "/" + f_path, dig_obj_type, reference_id, CATEGORY])
             break
         if not found:
             num_missing += 1
-        print("File Name: {}\t\tComponent ID: {}{}".format(f_path, comp_id, "" if found else "\t\tNOT FOUND"))
+        print("File Name: {}{}".format(f_path, "" if found else "\t\tNOT FOUND"))
     print("{} files succesfully found. ({} failures)".format(len(entries), num_missing))
     return entries
 

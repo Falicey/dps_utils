@@ -25,23 +25,21 @@ def main():
         for row in csv_reader:
             uri = row[URI_INDEX]
             kaltura_id = row[KALTURA_ID_INDEX]
-            print(uri)
             update_as(aspace, uri, kaltura_id)
 
 
 def update_as(aspace, uri, kaltura_id):
-    res = aspace.client.get(uri + "\\tree")
-    res_json = res.json()
-    #print(json.dumps(res_json, indent=2))
-    comp_uri = res_json['children'][0]['record_uri']
-    #print(comp_uri)
-    comp = aspace.client.get(comp_uri)
+    comp = aspace.client.get(uri)
     comp_json = comp.json()
     #print(json.dumps(comp_json, indent=2))
     comp_json['component_id'] = kaltura_id
-    r = aspace.client.post(comp_uri, json=comp_json)
+    r = aspace.client.post(uri, json=comp_json)
     message = json.loads(r.text)
     #print(message)
+    if r.status_code == 200:
+        print(uri + "\t\tSUCCESS")
+    else:
+        print(uri + "\t\tFAILURE")
 
 
 if __name__ == '__main__':
