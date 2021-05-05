@@ -21,11 +21,16 @@ def main():
                     username=username,
                     password=password)
     with open(csv_file, newline='') as f:
-        csv_reader = csv.reader(f)
+        csv_reader = csv.reader(f, delimiter=',')
         for row in csv_reader:
-            uri = row[URI_INDEX]
-            kaltura_id = row[KALTURA_ID_INDEX]
-            update_as(aspace, uri, kaltura_id)
+            try:
+                uri = row[URI_INDEX]
+                kaltura_id = row[KALTURA_ID_INDEX]
+                update_as(aspace, uri, kaltura_id)
+            except IndexError:
+                print("ERROR!  It looks like the some of the fields in Kaltura are in the wrong spot.  This happens "
+                      "from time to time.  Consult documentation on fix.")
+                break
 
 
 def update_as(aspace, uri, kaltura_id):
